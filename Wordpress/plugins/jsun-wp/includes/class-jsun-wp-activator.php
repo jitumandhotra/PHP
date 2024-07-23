@@ -1,36 +1,40 @@
 <?php
 
-/**
- * Fired during plugin activation
- *
- * @link       https://mandhotraclub.com/jitu
- * @since      1.0.0
- *
- * @package    Jsun_Wp
- * @subpackage Jsun_Wp/includes
- */
-
-/**
- * Fired during plugin activation.
- *
- * This class defines all code necessary to run during the plugin's activation.
- *
- * @since      1.0.0
- * @package    Jsun_Wp
- * @subpackage Jsun_Wp/includes
- * @author     jitu <jitumandhotra786@gmail.com>
- */
 class Jsun_Wp_Activator {
+		
+		public static function activate() {
+				self::create_tables();
+		}
 
-	/**
-	 * Short Description. (use period)
-	 *
-	 * Long Description.
-	 *
-	 * @since    1.0.0
-	 */
-	public static function activate() {
+		private static function create_tables() {
 
-	}
+				global $wpdb;
+				$charset_collate = $wpdb->get_charset_collate();
+				$sql = array();
 
+				$table_app_login_data = $wpdb->prefix . 'app_login_data';
+				if ($wpdb->get_var("SHOW TABLES LIKE '$table_app_login_data'") != $table_app_login_data) {
+						$sql[] = "CREATE TABLE $table_app_login_data (
+												id INT NOT NULL AUTO_INCREMENT,
+												user_id INT NOT NULL,
+												token VARCHAR(255),
+												PRIMARY KEY (id)
+										) $charset_collate;";
+				}
+
+				$table_app_login_user = $wpdb->prefix . 'app_login_user';				
+				if ($wpdb->get_var("SHOW TABLES LIKE '$table_app_login_user'") != $table_app_login_user) {
+						$sql[] = "CREATE TABLE $table_app_login_user (
+												id INT NOT NULL AUTO_INCREMENT,
+												name VARCHAR(255) NOT NULL,
+												email VARCHAR(255) NOT NULL,
+												PRIMARY KEY (id)
+										) $charset_collate;";
+				}
+
+				require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+				dbDelta($sql);
+		}
 }
+
+

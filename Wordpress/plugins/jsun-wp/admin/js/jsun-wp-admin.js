@@ -1,32 +1,49 @@
 (function( $ ) {
 	'use strict';
 
-	/**
-	 * All of the code for your admin-facing JavaScript source
-	 * should reside in this file.
-	 *
-	 * Note: It has been assumed you will write jQuery code here, so the
-	 * $ function reference has been prepared for usage within the scope
-	 * of this function.
-	 *
-	 * This enables you to define handlers, for when the DOM is ready:
-	 *
-	 * $(function() {
-	 *
-	 * });
-	 *
-	 * When the window is loaded:
-	 *
-	 * $( window ).load(function() {
-	 *
-	 * });
-	 *
-	 * ...and/or other possibilities.
-	 *
-	 * Ideally, it is not considered best practise to attach more than a
-	 * single DOM-ready or window-load handler for a particular page.
-	 * Although scripts in the WordPress core, Plugins and Themes may be
-	 * practising this, we should strive to set a better example in our own work.
-	 */
+	/*
+		$(function() {	});
+	*/
+
+	$( window ).load(function() {    
+
+		$('.nav-tab').click(function(event) {
+            event.preventDefault();
+            $('.nav-tab').removeClass('nav-tab-active');
+            $(this).addClass('nav-tab-active');
+            $('.tab-content').hide();
+            $($(this).attr('href')).show();
+        });
+
+        $('#generateApiKey, #generateNewApiKey').click(function(event) {
+        	$.ajax({
+        		method : 'POST',
+			    url: jsun.adminUrl+'admin-ajax.php',
+			    data: {
+			      action: 'jsun_generate_api_key',			      
+			    },
+			    success: function(response) {
+			    	$('#textToCopy').html(response.data.data.api_key);
+			    },
+			    error: function(jqXHR, textStatus, errorThrown) {
+			      console.error('AJAX Error:', textStatus, errorThrown);
+			    }
+		  	});
+		});       
+    
+
+	    function copyToClipboard(text) {
+	        var tempInput = document.createElement("input");
+	        tempInput.style = "position: absolute; left: -1000px; top: -1000px";
+	        tempInput.value = text;
+	        document.body.appendChild(tempInput);
+	        tempInput.select();
+	        document.execCommand("copy");
+	        document.body.removeChild(tempInput);
+	        alert('Copied to clipboard: ' + text);
+	    }    
+
+	});
+
 
 })( jQuery );
